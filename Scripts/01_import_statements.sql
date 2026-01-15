@@ -51,3 +51,27 @@ FROM read_sheet(
     header = true
 );
 
+
+
+
+CREATE OR REPLACE TABLE accounts_landing.account_summaries AS
+SELECT * 
+FROM read_sheet(
+    getvariable('accounts_path') || 'account_summaries.ods', 
+    sheet = 'Account_summaries',
+    columns={'Final Balance': 'DECIMAL'},
+    header = true
+);
+
+
+CREATE OR REPLACE TABLE accounts_landing.destination_accounts AS
+SELECT * 
+FROM read_sheet(
+    getvariable('accounts_path') || 'account_summaries.ods', 
+    sheet = 'Destination_accounts',
+    columns={'Final Balance': 'DECIMAL'},
+    header = true
+);
+
+
+

@@ -1,4 +1,5 @@
 
+-- Macros and DDL...
 
 CREATE SCHEMA IF NOT EXISTS accounts_working;
 
@@ -128,6 +129,29 @@ CREATE OR REPLACE TABLE accounts_working.ybs_two_year_frisa (
 );
 
 
+CREATE OR REPLACE TABLE accounts_working.account_summaries (
+    account_number BIGINT NOT NULL,
+    institution TEXT NOT NULL,
+    account_name TEXT NOT NULL,
+    starting_balance DECIMAL,
+    final_balance DECIMAL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    comment TEXT,
+    PRIMARY KEY(account_number)
+);
+
+
+CREATE OR REPLACE TABLE accounts_working.destination_accounts (
+    account_number BIGINT NOT NULL,
+    account_holder TEXT NOT NULL,
+    comment TEXT,
+    PRIMARY KEY(account_number)
+);
+
+
+-- Insert data...
+
 
 INSERT INTO accounts_working.nationwide BY NAME
 SELECT 
@@ -175,4 +199,29 @@ SELECT * FROM get_ybs_data(accounts_landing.ybs_triple_access_saver);
 
 INSERT INTO accounts_working.ybs_two_year_frisa BY NAME
 SELECT * FROM get_ybs_data(accounts_landing.ybs_two_year_frisa);
+
+
+
+INSERT INTO accounts_working.account_summaries BY NAME
+SELECT
+    t."Account Number" AS account_number,
+    t."Institution" AS institution,
+    t."Account Name" AS account_name,
+    NULL AS starting_balance,
+    t."Final Balance" AS final_balance,
+    t."Start Date" AS start_date,
+    t."End Date" AS end_date,
+    t."Comment" AS comment,
+FROM accounts_landing.account_summaries t
+WHERE t."Account Number" IS NOT NULL;
+
+
+INSERT INTO accounts_working.destination_accounts BY NAME
+SELECT
+    t."Account Number" AS account_number,
+    t."Account Holder" AS account_holder,
+    t."Comment" AS comment,
+FROM accounts_landing.destination_accounts t
+WHERE t."Account Number" IS NOT NULL;
+
 
