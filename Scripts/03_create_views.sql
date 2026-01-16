@@ -16,7 +16,11 @@ UNION ALL BY NAME
 UNION ALL BY NAME
 (SELECT 'Yorkshire Bank' AS source_account, * FROM accounts_working.yorkshire_bank)
 ) 
-SELECT * EXCLUDE (transaction_id, ledger_balance) FROM cte
+SELECT 
+    t.* EXCLUDE (transaction_id, ledger_balance),
+    t1.account_holder AS payment_recipient,
+FROM cte t
+LEFT JOIN accounts_working.destination_accounts t1 ON format('INTERNAL TRF T{}', t1.account_number) = t.description
 ;
 
 
