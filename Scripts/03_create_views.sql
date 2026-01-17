@@ -1,10 +1,9 @@
-LOAD Excel;
 
 CREATE OR REPLACE VIEW accounts_working.vw_all_transactions AS
 WITH cte AS (
-(SELECT 'Nationwide' AS source_account, * FROM accounts_working.nationwide)
+(SELECT 'NW Flex Account' AS source_account, * FROM accounts_working.nationwide)
 UNION ALL BY NAME
-(SELECT 'YBS Access Saver' AS source_account, * FROM accounts_working.ybs_access_saver)
+(SELECT 'YBS Access Saver Share Ann' AS source_account, * FROM accounts_working.ybs_access_saver)
 UNION ALL BY NAME
 (SELECT 'YBS Closed Savings' AS source_account, * FROM accounts_working.ybs_closed_savings)
 UNION ALL BY NAME
@@ -12,9 +11,9 @@ UNION ALL BY NAME
 UNION ALL BY NAME
 (SELECT 'YBS Triple Access Saver' AS source_account, * FROM accounts_working.ybs_triple_access_saver)
 UNION ALL BY NAME
-(SELECT 'YBS Two Year Fixed-Rate ISA' AS source_account, * FROM accounts_working.ybs_two_year_frisa)
+(SELECT 'YBS Two Year Fixed Rate ISA' AS source_account, * FROM accounts_working.ybs_two_year_frisa)
 UNION ALL BY NAME
-(SELECT 'Yorkshire Bank' AS source_account, * FROM accounts_working.yorkshire_bank)
+(SELECT 'YB Current Account' AS source_account, * FROM accounts_working.yorkshire_bank)
 ) 
 SELECT 
     t.* EXCLUDE (transaction_id, ledger_balance),

@@ -3,8 +3,8 @@
 
 CREATE SCHEMA IF NOT EXISTS accounts_working;
 
-CREATE OR REPLACE MACRO gen_transaction_id(transaction_date, row_id) AS
-    (date_part('year', transaction_date) * 10000000) + (date_part('month', transaction_date) * 100000) + (date_part('day', transaction_date) * 1000) +  row_id;
+CREATE OR REPLACE MACRO gen_transaction_id(item_date, row_id) AS
+    (date_part('year', item_date) * 10000000) + (date_part('month', item_date) * 100000) + (date_part('day', item_date) * 1000) +  row_id;
 
 CREATE OR REPLACE MACRO gen_ybs_transaction_id(page_number, row_id) AS
     10000000 - (page_number * 100) - row_id;
@@ -12,7 +12,7 @@ CREATE OR REPLACE MACRO gen_ybs_transaction_id(page_number, row_id) AS
 CREATE OR REPLACE MACRO get_ybs_data(table_name) AS TABLE
 SELECT 
     gen_ybs_transaction_id(t."Page", t."Row") AS transaction_id,
-    t."Transaction Date" AS transaction_date,
+    t."Processed Date" AS lineitem_date,
     t."Method of Payment" AS description,
     abs(t."Withdrawals") AS debit,
     t."Receipts" AS credit,
@@ -27,7 +27,7 @@ ORDER BY transaction_id DESC;
 
 CREATE OR REPLACE TABLE accounts_working.nationwide (
     transaction_id BIGINT NOT NULL,
-    transaction_date DATE NOT NULL,
+    lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
     debit DECIMAL,
     credit DECIMAL,
@@ -41,7 +41,7 @@ CREATE OR REPLACE TABLE accounts_working.nationwide (
 
 CREATE OR REPLACE TABLE accounts_working.yorkshire_bank (
     transaction_id BIGINT NOT NULL,
-    transaction_date DATE NOT NULL,
+    lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
     debit DECIMAL,
     credit DECIMAL,
@@ -56,7 +56,7 @@ CREATE OR REPLACE TABLE accounts_working.yorkshire_bank (
 
 CREATE OR REPLACE TABLE accounts_working.ybs_access_saver (
     transaction_id BIGINT NOT NULL,
-    transaction_date DATE NOT NULL,
+    lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
     debit DECIMAL,
     credit DECIMAL,
@@ -71,7 +71,7 @@ CREATE OR REPLACE TABLE accounts_working.ybs_access_saver (
 
 CREATE OR REPLACE TABLE accounts_working.ybs_closed_savings (
     transaction_id BIGINT NOT NULL,
-    transaction_date DATE NOT NULL,
+    lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
     debit DECIMAL,
     credit DECIMAL,
@@ -87,7 +87,7 @@ CREATE OR REPLACE TABLE accounts_working.ybs_closed_savings (
 
 CREATE OR REPLACE TABLE accounts_working.ybs_funeral_expenses (
     transaction_id BIGINT NOT NULL,
-    transaction_date DATE NOT NULL,
+    lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
     debit DECIMAL,
     credit DECIMAL,
@@ -102,7 +102,7 @@ CREATE OR REPLACE TABLE accounts_working.ybs_funeral_expenses (
 
 CREATE OR REPLACE TABLE accounts_working.ybs_triple_access_saver (
     transaction_id BIGINT NOT NULL,
-    transaction_date DATE NOT NULL,
+    lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
     debit DECIMAL,
     credit DECIMAL,
@@ -116,7 +116,7 @@ CREATE OR REPLACE TABLE accounts_working.ybs_triple_access_saver (
 
 CREATE OR REPLACE TABLE accounts_working.ybs_two_year_frisa (
     transaction_id BIGINT NOT NULL,
-    transaction_date DATE NOT NULL,
+    lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
     debit DECIMAL,
     credit DECIMAL,
@@ -157,7 +157,7 @@ CREATE OR REPLACE TABLE accounts_working.destination_accounts (
 INSERT INTO accounts_working.nationwide BY NAME
 SELECT 
     gen_transaction_id(t."Date", t."Row") AS transaction_id,
-    t."Date" AS transaction_date,
+    t."Date" AS lineitem_date,
     t."Description" AS description,
     t."Out" AS debit,
     t."In" AS credit,
@@ -173,7 +173,7 @@ ORDER BY transaction_id DESC;
 INSERT INTO accounts_working.yorkshire_bank BY NAME
 SELECT 
     gen_transaction_id(t."Date", t."Row") AS transaction_id,
-    t."Date" AS transaction_date,
+    t."Date" AS lineitem_date,
     t."Description" AS description,
     t."Debits" AS debit,
     t."Credits" AS credit,
