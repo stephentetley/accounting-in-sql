@@ -23,6 +23,68 @@ LEFT JOIN accounts_working.destination_accounts t1 ON format('INTERNAL TRF T{}',
 ;
 
 
+CREATE OR REPLACE VIEW accounts_working.vw_nationwide_daily_balance AS
+WITH cte_date_buckets0 AS (
+    SELECT
+        t.lineitem_date AS lineitem_date,
+        sum(t.credit) AS credit1, 
+        sum(t.debit) AS debit1,
+    FROM accounts_working.nationwide t
+    GROUP BY lineitem_date
+), cte_date_buckets AS (
+    SELECT 
+        t.lineitem_date, 
+        ifnull(t.credit1, 0.0) AS credit,
+        ifnull(t.debit1, 0.0) AS debit,
+        credit-debit AS daily_credit_minus_debit,
+    FROM cte_date_buckets0 t
+    -- Nationwide starts from zero
+)
+SELECT 
+    t.lineitem_date, 
+    t.debit,
+    t.credit,
+    sum(t.daily_credit_minus_debit) OVER w AS balance
+FROM cte_date_buckets t
+WINDOW w AS (
+    ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+)
+ORDER BY t.lineitem_date ASC;
+
+
+CREATE OR REPLACE VIEW accounts_working.vw_yorkshire_bank_daily_balance AS
+WITH cte_date_buckets0 AS (
+    SELECT
+        t.lineitem_date AS lineitem_date,
+        sum(t.credit) AS credit1, 
+        sum(t.debit) AS debit1,
+    FROM accounts_working.yorkshire_bank t
+    GROUP BY lineitem_date
+), cte_date_buckets AS (
+    SELECT 
+        t.lineitem_date, 
+        ifnull(t.credit1, 0.0) AS credit,
+        ifnull(t.debit1, 0.0) AS debit,
+        credit-debit AS daily_credit_minus_debit,
+    FROM cte_date_buckets0 t
+), cte_with_balance0 AS (
+    SELECT 
+        t.lineitem_date, 
+        t.debit,
+        t.credit,
+        sum(t.daily_credit_minus_debit) OVER w AS balance
+    FROM cte_date_buckets t
+    WINDOW w AS (
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    )
+)
+SELECT
+    t.lineitem_date, 
+    t.debit,
+    t.credit,
+    t.balance + 4439.50 AS balance
+FROM cte_with_balance0 t
+ORDER BY t.lineitem_date ASC;
 
 
 --CREATE OR REPLACE TEMPORARY TABLE temp_report AS 
