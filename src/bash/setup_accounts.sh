@@ -16,9 +16,12 @@ fi
 
 if [[ ! -z "${ACCOUNTS_SQL}" ]]; then
 
+    echo "Statements path: $1"
+
 duckdb $2 <<EOF
 
-set variable accounts_path = '$1';
+set variable statements_path = '$1';
+
 
 .read '$ACCOUNTS_SQL/src/sql/01_import_statements.sql'
 .read '$ACCOUNTS_SQL/src/sql/02_setup_working_tables.sql'
