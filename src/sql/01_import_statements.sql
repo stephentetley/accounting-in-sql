@@ -17,25 +17,25 @@ FROM read_sheet(
 );
 
 CREATE OR REPLACE TABLE accounts_landing.ybs_access_saver AS
-SELECT * FROM read_ybs_sheet(getvariable('accounts_path') || 'ybs_access_saver_share_ann.ods');
+SELECT * FROM read_ybs_sheet(getvariable('accounts_path') || 'ybs_access_saver_share_ann.xlsx');
 
 CREATE OR REPLACE TABLE accounts_landing.ybs_closed_savings AS
-SELECT * FROM read_ybs_sheet(getvariable('accounts_path') || 'ybs_closed_savings.ods');
+SELECT * FROM read_ybs_sheet(getvariable('accounts_path') || 'ybs_closed_savings.xlsx');
 
 CREATE OR REPLACE TABLE accounts_landing.ybs_funeral_expenses AS
-SELECT * FROM read_ybs_sheet(getvariable('accounts_path') || 'ybs_funeral_expenses.ods');
+SELECT * FROM read_ybs_sheet(getvariable('accounts_path') || 'ybs_funeral_expenses.xlsx');
 
 CREATE OR REPLACE TABLE accounts_landing.ybs_triple_access_saver AS
-SELECT * FROM read_ybs_sheet(getvariable('accounts_path') || 'ybs_triple_access_saver.ods');
+SELECT * FROM read_ybs_sheet(getvariable('accounts_path') || 'ybs_triple_access_saver.xlsx');
 
 CREATE OR REPLACE TABLE accounts_landing.ybs_two_year_frisa AS
-SELECT * FROM read_ybs_sheet(getvariable('accounts_path') || 'ybs_2_year_fixed_rate_isa.ods');
+SELECT * FROM read_ybs_sheet(getvariable('accounts_path') || 'ybs_2_year_fixed_rate_isa.xlsx');
 
 
 CREATE OR REPLACE TABLE accounts_landing.nationwide AS
 SELECT * 
 FROM read_sheet(
-    getvariable('accounts_path') || 'nationwide.ods', 
+    getvariable('accounts_path') || 'nationwide_current_account.xlsx', 
     sheet = 'statements_transcript',
     columns={'Out': 'DECIMAL', 'In': 'DECIMAL', 'Balance': 'DECIMAL'},
     header = true
@@ -45,7 +45,7 @@ FROM read_sheet(
 CREATE OR REPLACE TABLE accounts_landing.yorkshire_bank AS
 SELECT * 
 FROM read_sheet(
-    getvariable('accounts_path') || 'yorkshire_bank.ods', 
+    getvariable('accounts_path') || 'yorkshire_bank_current_account.xlsx', 
     sheet = 'statements_transcript',
     columns={'Debits': 'DECIMAL', 'Credits': 'DECIMAL', 'Balance': 'DECIMAL'},
     header = true
@@ -57,7 +57,7 @@ FROM read_sheet(
 CREATE OR REPLACE TABLE accounts_landing.account_summaries AS
 SELECT * 
 FROM read_sheet(
-    getvariable('accounts_path') || 'account_summaries.ods', 
+    getvariable('accounts_path') || 'account_summaries.xlsx', 
     sheet = 'Account_summaries',
     columns={'Final Balance': 'DECIMAL'},
     header = true
@@ -67,7 +67,7 @@ FROM read_sheet(
 CREATE OR REPLACE TABLE accounts_landing.destination_accounts AS
 SELECT * 
 FROM read_sheet(
-    getvariable('accounts_path') || 'account_summaries.ods', 
+    getvariable('accounts_path') || 'account_summaries.xlsx', 
     sheet = 'Destination_accounts',
     columns={'Final Balance': 'DECIMAL'},
     header = true
