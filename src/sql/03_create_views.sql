@@ -20,6 +20,7 @@ SELECT
     t1.account_holder AS payment_recipient,
 FROM cte t
 LEFT JOIN accounts_working.destination_accounts t1 ON format('INTERNAL TRF T{}', t1.account_number) = t.description
+order by t.lineitem_date DESC
 ;
 
 

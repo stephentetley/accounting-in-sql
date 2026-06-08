@@ -14,6 +14,11 @@ SELECT
     gen_ybs_transaction_id(t."Page", t."Row") AS transaction_id,
     t."Processed Date" AS lineitem_date,
     t."Method of Payment" AS description,
+    case
+        when t."Withdrawals" is not null then 'Debit'
+        when t."Receipts" is not null then 'Credit'
+        else null
+    end as debit_or_credit,
     abs(t."Withdrawals") AS debit,
     t."Receipts" AS credit,
     t."Ledger Balance" AS ledger_balance,
@@ -29,6 +34,7 @@ CREATE OR REPLACE TABLE accounts_working.nationwide (
     transaction_id BIGINT NOT NULL,
     lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
+    debit_or_credit varchar,
     debit DECIMAL,
     credit DECIMAL,
     ledger_balance DECIMAL,
@@ -43,6 +49,7 @@ CREATE OR REPLACE TABLE accounts_working.yorkshire_bank (
     transaction_id BIGINT NOT NULL,
     lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
+    debit_or_credit varchar,
     debit DECIMAL,
     credit DECIMAL,
     ledger_balance DECIMAL,
@@ -58,6 +65,7 @@ CREATE OR REPLACE TABLE accounts_working.ybs_access_saver (
     transaction_id BIGINT NOT NULL,
     lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
+    debit_or_credit varchar,
     debit DECIMAL,
     credit DECIMAL,
     ledger_balance DECIMAL,
@@ -73,6 +81,7 @@ CREATE OR REPLACE TABLE accounts_working.ybs_closed_savings (
     transaction_id BIGINT NOT NULL,
     lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
+    debit_or_credit varchar,
     debit DECIMAL,
     credit DECIMAL,
     ledger_balance DECIMAL,
@@ -89,6 +98,7 @@ CREATE OR REPLACE TABLE accounts_working.ybs_funeral_expenses (
     transaction_id BIGINT NOT NULL,
     lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
+    debit_or_credit varchar,
     debit DECIMAL,
     credit DECIMAL,
     ledger_balance DECIMAL,
@@ -104,6 +114,7 @@ CREATE OR REPLACE TABLE accounts_working.ybs_triple_access_saver (
     transaction_id BIGINT NOT NULL,
     lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
+    debit_or_credit varchar,
     debit DECIMAL,
     credit DECIMAL,
     ledger_balance DECIMAL,
@@ -118,6 +129,7 @@ CREATE OR REPLACE TABLE accounts_working.ybs_two_year_frisa (
     transaction_id BIGINT NOT NULL,
     lineitem_date DATE NOT NULL,
     description TEXT NOT NULL,
+    debit_or_credit varchar,
     debit DECIMAL,
     credit DECIMAL,
     ledger_balance DECIMAL,
@@ -159,6 +171,11 @@ SELECT
     gen_transaction_id(t."Date", t."Row") AS transaction_id,
     t."Date" AS lineitem_date,
     t."Description" AS description,
+    case
+        when t."Out" is not null then 'Debit'
+        when t."In" is not null then 'Credit'
+        else null
+    end as debit_or_credit,
     t."Out" AS debit,
     t."In" AS credit,
     t."Balance" AS ledger_balance,
@@ -175,6 +192,11 @@ SELECT
     gen_transaction_id(t."Date", t."Row") AS transaction_id,
     t."Date" AS lineitem_date,
     t."Description" AS description,
+    case
+        when t."Debits" is not null then 'Debit'
+        when t."Credits" is not null then 'Credit'
+        else null
+    end as debit_or_credit,
     t."Debits" AS debit,
     t."Credits" AS credit,
     t."Balance" AS ledger_balance,
