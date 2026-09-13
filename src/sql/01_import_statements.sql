@@ -30,8 +30,8 @@ with cte1_raw as (
                 try_cast("Receipts" as decimal) as "Receipts",
                 try_cast("Withdrawals" as decimal) as "Withdrawals",
                 try_cast("Ledger Balance" as decimal) as "Ledger Balance",
-                try_cast("Interest After Tans" as decimal) as "Interest After Tans",
-                try_cast("Internal TRF" as integer) as "Internal TRF")
+                try_cast("Interest After Taxs" as decimal) as "Interest After Taxs",
+                try_cast("Internal TRF" as bigint) as "Internal TRF")
     from cte1_raw
 ) 
 select * from cte2_typed;
@@ -139,7 +139,7 @@ with cte1_raw as (
             header = true)
 ), cte2_typed as (
     select * replace(
-                try_cast("Account Number" as integer) as "Account Number")
+                try_cast("Account Number" as bigint) as "Account Number")
     from cte1_raw
 )
 select * from cte2_typed;
