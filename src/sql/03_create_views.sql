@@ -17,11 +17,70 @@ UNION ALL BY NAME
 ) 
 SELECT 
     t.* EXCLUDE (transaction_id, ledger_balance),
-    t1.account_holder AS payment_recipient,
+    coalesce(t1.account_holder, t.comment) AS payment_recipient,
 FROM cte t
 LEFT JOIN accounts_working.destination_accounts t1 ON format('INTERNAL TRF T{}', t1.account_number) = t.description
 order by t.lineitem_date DESC
 ;
+
+
+CREATE OR REPLACE VIEW accounts_working.vw_gifts AS
+select 
+    strftime(t.lineitem_date, '%d/%m/%Y') as "Date",
+    t.description as "Transaction Description",
+    format('{:.2f}', t.debit) as "Amount",
+    t.payment_recipient as "Recipient",
+    t.source_account as "Account Name",
+    t.statement_or_page_number as "Statement Number",
+    t.line_number as "Line Number",
+    t.comment as "Comment",
+    t.category as "Category",
+from accounts_working.vw_all_transactions t 
+where t.category = 'Gift to Family / Friends'
+order by t.lineitem_date desc;
+
+CREATE OR REPLACE VIEW accounts_working.vw_charity_donations AS
+select
+    strftime(t.lineitem_date, '%d/%m/%Y') as "Date",
+    t.description as "Transaction Description",
+    format('{:.2f}', t.debit) as "Amount",
+    t.payment_recipient as "Recipient",
+    t.source_account as "Account Name",
+    t.statement_or_page_number as "Statement Number",
+    t.line_number as "Line Number",
+    t.comment as "Comment",
+    t.category as "Category",
+from accounts_working.vw_all_transactions t 
+where t.category = 'Charity Donation'
+order by t.lineitem_date desc;
+
+CREATE OR REPLACE VIEW accounts_working.vw_cheque_unknown AS
+select
+    strftime(t.lineitem_date, '%d/%m/%Y') as "Date",
+    t.description as "Transaction Description",
+    format('{:.2f}', t.debit) as "Amount",
+    t.payment_recipient as "Recipient",
+    t.source_account as "Account Name",
+    t.statement_or_page_number as "Statement Number",
+    t.line_number as "Line Number",
+    t.comment as "Comment",
+    t.category as "Category",
+from accounts_working.vw_all_transactions t 
+where t.category = 'Cheque Unknown'
+order by t.lineitem_date desc;
+
+-- Summaries - order not needed
+CREATE OR REPLACE VIEW accounts_working.vw_gift_summaries AS
+select 'All gifts' as category, sum(t.debit) as total from accounts_working.vw_all_transactions t where t.category in ('Gift to Family / Friends', 'Charity Donation')
+union all by name
+select 'Gift to Family / Friends' as category, sum(t.debit) as total from accounts_working.vw_all_transactions t where t.category = 'Gift to Family / Friends'
+union all by name
+select 'Charity Donation' as category, sum(t.debit) as total from accounts_working.vw_all_transactions t where t.category = 'Charity Donation'
+union all by name
+select 'Cheque Unknown - not added to [All Gifts]' as category, sum(t.debit) as total from accounts_working.vw_all_transactions t where t.category = 'Cheque Unknown';
+
+
+
 
 
 CREATE OR REPLACE VIEW accounts_working.vw_nationwide_daily_balance AS
