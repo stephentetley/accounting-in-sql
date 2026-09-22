@@ -28,7 +28,7 @@ CREATE OR REPLACE VIEW accounts_working.vw_gifts AS
 select 
     strftime(t.lineitem_date, '%d/%m/%Y') as "Date",
     t.description as "Transaction Description",
-    format('{:.2f}', t.debit) as "Amount",
+    t.debit as "Amount",
     t.payment_recipient as "Recipient",
     t.source_account as "Account Name",
     t.statement_or_page_number as "Statement Number",
@@ -37,13 +37,13 @@ select
     t.category as "Category",
 from accounts_working.vw_all_transactions t 
 where t.category = 'Gift to Family / Friends'
-order by t.lineitem_date desc;
+order by t.lineitem_date asc;
 
 CREATE OR REPLACE VIEW accounts_working.vw_charity_donations AS
 select
     strftime(t.lineitem_date, '%d/%m/%Y') as "Date",
     t.description as "Transaction Description",
-    format('{:.2f}', t.debit) as "Amount",
+    t.debit as "Amount",
     t.payment_recipient as "Recipient",
     t.source_account as "Account Name",
     t.statement_or_page_number as "Statement Number",
@@ -58,7 +58,7 @@ CREATE OR REPLACE VIEW accounts_working.vw_cheque_unknown AS
 select
     strftime(t.lineitem_date, '%d/%m/%Y') as "Date",
     t.description as "Transaction Description",
-    format('{:.2f}', t.debit) as "Amount",
+    t.debit as "Amount",
     t.payment_recipient as "Recipient",
     t.source_account as "Account Name",
     t.statement_or_page_number as "Statement Number",
